@@ -1,0 +1,24 @@
+{
+  "name": "ti-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/calibro/ti-scraper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calibro/ti-scraper/issues"
+  },
+  "homepage": "https://github.com/calibro/ti-scraper#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "papaparse": "^5.1.1"
+  }
+}
