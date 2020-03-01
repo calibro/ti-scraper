@@ -13,6 +13,10 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(serveStatic(__dirname + '/client/dist/', { 'index': ['index.html', 'index.htm'] }))
 app.use(__dirname + "/data", express.static(__dirname + "/data"));
 
+if (!fs.existsSync(__dirname + "/data")){
+  fs.mkdirSync(__dirname + "/data");
+}
+
 app.get('/api/data', function(req,res) {
   const directoryPath = path.join(__dirname, 'data');
   let file_resp = []
