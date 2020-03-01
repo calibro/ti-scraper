@@ -34,7 +34,7 @@ async function scrape(query) {
   console.log(csvData)
 
   let now = new Date()
-  fs.writeFile(__dirname + '/data/' + query + '-' + now.toISOString() + ".csv", csvData, function(err) {
+  fs.writeFile(__dirname + '/../data/' + query + '-' + now.toISOString() + ".csv", csvData, function(err) {
     if(err) {
         return console.log(err);
     }
