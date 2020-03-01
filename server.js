@@ -11,7 +11,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.use(serveStatic(__dirname + '/client/dist/', { 'index': ['index.html', 'index.htm'] }))
-app.use(__dirname + "/data", express.static(__dirname + "/data"));
+app.use("/data", express.static(__dirname + "/data"));
 
 if (!fs.existsSync(__dirname + "/data")){
   fs.mkdirSync(__dirname + "/data");

@@ -30,6 +30,12 @@ async function scrape(query) {
     offset += 50
   }
   //console.log(data)
+
+  data.forEach(el => {
+    el.blacklistsCount = Object.keys(el.blacklists).length
+    el.blacklistsSources = Object.keys(el.blacklists).join(' - ')
+  })
+
   let csvData = Papa.unparse(data)
   console.log(csvData)
 
