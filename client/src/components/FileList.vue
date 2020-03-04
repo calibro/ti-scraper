@@ -4,16 +4,27 @@
     <ul class="file-list-ul">
       <li v-for="(item, index) in list" :key="index">
         <a :href="'/data/' + item.filename" target="_blank">{{item.filename}}</a>
-        <span class="info"><span class="info-label">created:</span>{{item.created}}</span>
-        <span class="info"><span class="info-label">size:</span>{{item.size}}</span>
+        <span class="info"><span class="info-label">created:</span>{{printDate(item.created)}}</span>
+        <span class="info"><span class="info-label">size:</span>{{printSize(item.size)}}</span>
       </li>
     </ul>
   </div>
 </template>
 <script>
+import prettyBytes from 'pretty-bytes'
+import moment from 'moment'
+
 export default {
   name: 'FileList',
-  props: ['list']
+  props: ['list'],
+  methods: {
+    printSize(val) {
+      return prettyBytes(val)
+    },
+    printDate(val) {
+      return moment(val).format('DD/MM/YYYY - HH:mm:ss')
+    }
+  }
 }
 </script>
 

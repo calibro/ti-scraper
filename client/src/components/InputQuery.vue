@@ -1,6 +1,6 @@
 <template>
   <div class="input-query">
-      <h3>Scrape data {{this.running ? '(running)' : ''}}:</h3>
+      <h3>Scrape data {{this.running ? '(Running - ' + this.message + ')' : ''}}:</h3>
       <input type="text" v-model="query" :disabled="running">
       <button @click="startQuery" :disabled="running">Send</button>
       <button @click="reset" :disabled="!running">Reset</button>
@@ -12,8 +12,9 @@ export default {
   name: 'FileList',
   data () {
     return {
-      query : 'fastweb.it',
-      running: false
+      query : 'fastwebnet.it',
+      running: false,
+      message: ''
     }
   },
   mounted() {
@@ -33,6 +34,7 @@ export default {
         .then(res=>res.json())
         .then(res => {
           this.running = res.running
+          this.message = res.message
           this.checkStatus()
         });
       }
@@ -44,6 +46,8 @@ export default {
         .then(res => {
           console.log(res)
           this.running = res.running
+          this.message = res.message
+
           if(!this.running) {
             clearInterval(checkTimer)
             this.$emit('change')
@@ -56,6 +60,7 @@ export default {
       .then(res=>res.json())
       .then(res => {
         this.running = res.running
+        this.message = res.message
       });
     }
   }

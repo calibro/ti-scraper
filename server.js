@@ -41,16 +41,22 @@ app.post('/api/scrape', function(req,res) {
   var query = req.body.query;
   console.log('start scraping with query ', query);
   TIScraper.scrape(query)
-  return res.send({'running': true});
+  return res.send({'running': true, 'message': 'Starting'});
 })
 
 app.get('/api/scrape/status', function(req,res) {
-  return res.send({'running': TIScraper.isRunning() });
+  return res.send({
+    'running': TIScraper.isRunning(),
+    'message': 'Scraping ' + TIScraper.currentOffset() +  '/1000'
+});
 })
 
 app.get('/api/scrape/reset', function(req,res) {
   TIScraper.reset();
-  return res.send({'running': false });
+  return res.send({
+    'running': false,
+    'message': ''
+  });
 })
 
 app.listen(port)
