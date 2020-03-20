@@ -3,8 +3,12 @@ var serveStatic = require('serve-static')
 const path = require('path');
 const fs = require('fs');
 const TIScraper = require('./scripts/ti-scraper');
+var cors = require('cors');
 
 var app = express()
+
+app.use(cors());
+
 var port = process.env.PORT || 3000;
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
@@ -16,6 +20,12 @@ app.use("/data", express.static(__dirname + "/data"));
 if (!fs.existsSync(__dirname + "/data")){
   fs.mkdirSync(__dirname + "/data");
 }
+
+/*app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});*/
 
 app.get('/api/data', function(req,res) {
   const directoryPath = path.join(__dirname, 'data');

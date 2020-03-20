@@ -53,7 +53,7 @@ export default {
             this.$emit('change')
           }
         });
-      }, 300)
+      }, 1000)
     },
     reset () {
       fetch('/api/scrape/reset')
