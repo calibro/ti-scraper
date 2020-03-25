@@ -8,6 +8,7 @@ const limit = 1000
 
 let running = false
 let offset = 0
+let message = ''
 
 async function scrape(query) {
   let data = []
@@ -15,14 +16,19 @@ async function scrape(query) {
   if (!running) {
     offset = 0
     running = true
-    while (offset < limit) {
+    message = ''
+    while (offset < limit && running) {
       try {
         let resp = await axios({
           url: base_url + '&query_entry=' + query + '&&offset=' + offset,
           headers: {'Referer': 'https://talosintelligence.com/reputation_center/lookup?search=' + query}
           })
         if (resp.data) {
-          data = data.concat(resp.data.ips)
+          if (resp.data.count > 0) {
+            data = data.concat(resp.data.ips)
+          } else {
+            running = false
+          }
         } else {
           console.log('ERROR:' + resp)
         }
@@ -33,46 +39,59 @@ async function scrape(query) {
     }
     //console.log(data)
 
-    data.forEach(el => {
-      el.blacklists_count = Object.keys(el.blacklists).length
-      el.blacklists_snources = Object.keys(el.blacklists).join(' | ')
+    if (running && data.length > 0){
+      data.forEach(el => {
+        el.blacklists_count = Object.keys(el.blacklists).length
+        el.blacklists_snources = Object.keys(el.blacklists).join(' | ')
 
-      //parse second and third levels domains
-      let dom = parseDomain(el.hostname)
-      if(dom) {
-        el.second_level_domain = dom.domain + '.' + dom.tld
-        el.third_level_domain = dom.subdomain.split('.').slice(-1) + '.' + el.second_level_domain
-      }
-      console.log(dom)
-
-      //add 'category' based on second level domains
-      if(query.includes('fastwebnet')) {
-        if(el.hostname && el.hostname.includes('fastweb.it')){
-          el.category = 'corporate'
-        } else if (el.hostname && el.hostname.includes('fastwebnet.it')) {
-          el.category = 'consumer'
-        } else {
-          el.category = 'enterprise'
+        //parse second and third levels domains
+        let dom = parseDomain(el.hostname)
+        if(dom) {
+          el.second_level_domain = dom.domain + '.' + dom.tld
+          el.third_level_domain = dom.subdomain.split('.').slice(-1) + '.' + el.second_level_domain
         }
-      }
-    })
+        console.log(dom)
 
-    let csvData = Papa.unparse(data)
-    console.log(csvData)
+        //add 'category' based on second level domains
+        if(query.includes('fastwebnet')) {
+          if(el.hostname && el.hostname.includes('fastweb.it')){
+            el.category = 'corporate'
+          } else if (el.hostname && el.hostname.includes('fastwebnet.it')) {
+            el.category = 'consumer'
+          } else {
+            el.category = 'enterprise'
+          }
+        }
+      })
 
-    let now = new Date()
-    fs.writeFile(__dirname + '/../data/' + query + '-' + now.toISOString() + ".csv", csvData, function(err) {
-      if(err) {
-          return console.log(err);
-      }
-      running = false
-      console.log("The file was saved!");
-    });
+      let csvData = Papa.unparse(data)
+      console.log(csvData)
+
+      let now = new Date()
+      fs.writeFile(__dirname + '/../data/' + query + '-' + now.toISOString() + ".csv", csvData, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        running = false
+        console.log("The file was saved!");
+      });
+    } else {
+      message = 'No data for the query "'+ query + '"'
+      console.log();
+    }
   }
 }
 
 function isRunning () {
   return running
+}
+
+function getStatusMessage () {
+  if (running) {
+    return 'Scraping ' + offset +  '/' +limit
+  } else {
+    return message
+  }
 }
 
 function currentOffset () {
@@ -81,13 +100,15 @@ function currentOffset () {
 
 function reset () {
   running = false
+  message = ''
 }
 
 module.exports = {
   scrape,
   isRunning,
   reset,
-  currentOffset
+  currentOffset,
+  getStatusMessage
 };
 
 //scrape()

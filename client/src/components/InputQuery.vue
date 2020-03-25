@@ -1,6 +1,6 @@
 <template>
   <div class="input-query">
-      <h3>Scrape data {{this.running ? '(Running - ' + this.message + ')' : ''}}:</h3>
+      <h3>Scrape data {{this.running && this.message ? ' - Running: ' + this.message : ' - ' + this.message}}</h3>
       <input type="text" v-model="query" :disabled="running">
       <button @click="startQuery" :disabled="running">Send</button>
       <button @click="reset" :disabled="!running">Reset</button>

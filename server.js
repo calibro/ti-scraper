@@ -57,7 +57,7 @@ app.post('/api/scrape', function(req,res) {
 app.get('/api/scrape/status', function(req,res) {
   return res.send({
     'running': TIScraper.isRunning(),
-    'message': 'Scraping ' + TIScraper.currentOffset() +  '/1000'
+    'message': TIScraper.getStatusMessage()
 });
 })
 
