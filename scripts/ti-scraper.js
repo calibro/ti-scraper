@@ -37,12 +37,12 @@ async function scrape(query) {
       }
       offset += 50
     }
-    //console.log(data)
 
     if (running && data.length > 0){
       data.forEach(el => {
         el.blacklists_count = Object.keys(el.blacklists).length
         el.blacklists_snources = Object.keys(el.blacklists).join(' | ')
+        delete el.blacklists
 
         //parse second and third levels domains
         let dom = parseDomain(el.hostname)
@@ -50,7 +50,6 @@ async function scrape(query) {
           el.second_level_domain = dom.domain + '.' + dom.tld
           el.third_level_domain = dom.subdomain.split('.').slice(-1) + '.' + el.second_level_domain
         }
-        console.log(dom)
 
         //add 'category' based on second level domains
         if(query.includes('fastwebnet')) {
@@ -70,6 +69,7 @@ async function scrape(query) {
       let now = new Date()
       fs.writeFile(__dirname + '/../data/' + query + '-' + now.toISOString() + ".csv", csvData, function(err) {
         if(err) {
+            message = 'Could not save result file:' + err
             return console.log(err);
         }
         running = false
