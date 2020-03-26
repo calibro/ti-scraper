@@ -41,7 +41,7 @@ async function scrape(query) {
     if (running && data.length > 0){
       data.forEach(el => {
         el.blacklists_count = Object.keys(el.blacklists).length
-        el.blacklists_snources = Object.keys(el.blacklists).join(' | ')
+        el.blacklists_sources = Object.keys(el.blacklists).join(' | ')
         delete el.blacklists
 
         //parse second and third levels domains
