@@ -1,84 +1,98 @@
 <template>
   <div class="input-query">
-      <h3>Scrape data {{this.running && this.message ? ' - Running: ' + this.message : ' - ' + this.message}}</h3>
-      <input type="text" v-model="query" :disabled="running">
-      <button @click="startQuery" :disabled="running">Send</button>
-      <button @click="reset" :disabled="!running">Reset</button>
+    <h4 class="mb-3">
+      Search by IP, domain, or network owner
+    </h4>
+    <div class="row">
+      <div class="col-4">
+        <b-form-input
+          type="text"
+          v-model="query"
+          :disabled="running"
+          placeholder="reputation lookup"
+        />
+      </div>
+      <div class="col-auto">
+        <b-button
+          class="mr-2"
+          variant="warning"
+          @click="startQuery"
+          :disabled="running"
+          >Scrape</b-button
+        >
+        <b-button @click="reset" :disabled="!running">Reset</b-button>
+      </div>
+      <div class="col">
+        <h6 class="text-muted my-2 text-monospace">
+          {{
+            this.running && this.message
+              ? "Running: " + this.message
+              : this.message
+          }}
+        </h6>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'FileList',
-  data () {
+  name: "FileList",
+  data() {
     return {
-      query : 'fastwebnet.it',
+      query: "fastwebnet.it",
       running: false,
-      message: ''
-    }
+      message: ""
+    };
   },
   mounted() {
-    this.checkStatus()
+    this.checkStatus();
   },
   methods: {
-    startQuery () {
-      if(this.query) {
-        fetch('/api/scrape', {
-          method: 'post',
+    startQuery() {
+      if (this.query) {
+        fetch("/api/scrape", {
+          method: "post",
           headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify({query: this.query})
+          body: JSON.stringify({ query: this.query })
         })
-        .then(res=>res.json())
-        .then(res => {
-          this.running = res.running
-          this.message = res.message
-          this.checkStatus()
-        });
+          .then(res => res.json())
+          .then(res => {
+            this.running = res.running;
+            this.message = res.message;
+            this.checkStatus();
+          });
       }
     },
-    checkStatus () {
-      let checkTimer = setInterval( ()=> {
-        fetch('/api/scrape/status')
-        .then(res=>res.json())
-        .then(res => {
-          console.log(res)
-          this.running = res.running
-          this.message = res.message
+    checkStatus() {
+      let checkTimer = setInterval(() => {
+        fetch("/api/scrape/status")
+          .then(res => res.json())
+          .then(res => {
+            console.log(res);
+            this.running = res.running;
+            this.message = res.message;
 
-          if(!this.running) {
-            clearInterval(checkTimer)
-            this.$emit('change')
-          }
-        });
-      }, 1000)
+            if (!this.running) {
+              clearInterval(checkTimer);
+              this.$emit("change");
+            }
+          });
+      }, 1000);
     },
-    reset () {
-      fetch('/api/scrape/reset')
-      .then(res=>res.json())
-      .then(res => {
-        this.running = res.running
-        this.message = res.message
-      });
+    reset() {
+      fetch("/api/scrape/reset")
+        .then(res => res.json())
+        .then(res => {
+          this.running = res.running;
+          this.message = res.message;
+        });
     }
   }
-}
+};
 </script>
 
-<style scoped lang="stylus">
-.input-query
-  input[type=text]
-    height 35px
-    width 300px
-    font-size 22px
-    &:disabled
-      opacity 0.8
-  button
-    margin-left 20px
-    height 35px
-    font-size 22px
-    &:disabled
-      opacity 0.8
-</style>
+<style scoped lang="stylus"></style>
